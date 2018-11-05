@@ -1,4 +1,4 @@
-/*! Raven.js 3.27.0 (200cffcc) | github.com/getsentry/raven-js */
+/*! Raven.js 3.27.0 (fd2bc565) | github.com/getsentry/raven-js */
 
 /*
  * Includes TraceKit
@@ -1989,6 +1989,9 @@ Raven.prototype = {
     } else if (current.exception || last.exception) {
       // Exception interface (i.e. from captureException/onerror)
       return isSameException(current.exception, last.exception);
+    } else if (current.fingerprint || last.fingerprint) {
+      return Boolean(current.fingerprint && last.fingerprint) &&
+        JSON.stringify(current.fingerprint) === JSON.stringify(last.fingerprint)
     }
 
     return true;
@@ -2185,6 +2188,12 @@ Raven.prototype = {
     }
 
     var url = this._globalEndpoint;
+
+    self._triggerEvent('sending', {
+      data: data,
+      src: url
+    });
+
     (globalOptions.transport || this._makeRequest).call(this, {
       url: url,
       auth: auth,
