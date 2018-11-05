@@ -2120,6 +2120,12 @@ Raven.prototype = {
     }
 
     var url = this._globalEndpoint;
+
+    self._triggerEvent('sending', {
+      data: data,
+      src: url
+    });
+
     (globalOptions.transport || this._makeRequest).call(this, {
       url: url,
       auth: auth,
